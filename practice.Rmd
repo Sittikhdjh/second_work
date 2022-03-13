@@ -1,0 +1,116 @@
+---
+title: "Practice for R language and data analysis"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+
+#Problem 1--------------------------------------------------------------
+
+```{r}
+#STEP 1 Install or Load "foreign" package
+#Get foreign
+if (!require("foreign")) {
+  install.packages("foreign")
+  library(foreign)
+}
+```
+```{r}
+#STEP 2 Convert to dataframe
+df <- data.frame(read.dta("C:/Users/sitti khadijah/Documents/homework2/Restaurant.dta"))
+```
+```{r}
+mean(df$mealprice)
+```
+```{r}
+missing_mealprice<-df[is.na(df$mealprice),]
+```
+```{r}
+write.csv2(missing_mealprice,file="C:/Users/sitti khadijah/Documents/homework2/Restaurant_NA.csv")
+```
+```{r}
+print(missing_mealprice)
+```
+```{r}
+#Generate a new data frame without missing observation
+unmissing_mealprice<-df[!is.na(df$mealprice),]
+```
+```{r}
+print(unmissing_mealprice)
+```
+```{r}
+#create two new variables (qualityscore)
+attach(unmissing_mealprice)
+```
+```{r}
+Restaurant_FULL<-unmissing_mealprice
+```
+```{r}
+Restaurant_FULL$qualityscore <- ifelse(Restaurant_FULL$qualityrating == "Excellent", 3,
+                                       ifelse(Restaurant_FULL$qualityrating == "Very Good", 2,
+                                              ifelse(Restaurant_FULL$qualityrating == "Good", 1, 4)))
+```
+```{r}
+print(Restaurant_FULL)
+```
+```{r}
+Restaurant_FULL$pricescore <- ifelse(Restaurant_FULL$mealprice <= 20, 3,
+                                        ifelse(Restaurant_FULL$mealprice > 20 & Restaurant_FULL$mealprice <= 35, 2,
+                                               ifelse(Restaurant_FULL$mealprice > 35, 1, 5)))
+```
+```{r}
+print(Restaurant_FULL)
+```
+```{r}
+write.csv2(Restaurant_FULL,file="C:/Users/sitti khadijah/Documents/homework2/Restaurant_FULL.csv")
+```
+```{r}
+detach(unmissing_mealprice)
+```
+
+#Problem 2--------------------------------------------------------------
+```{r}
+#STEP 1 Install or Load "XML" package
+ if (!require("XML")) {
+    install.packages("XML")
+    library(XML)
+   }
+```
+```{r}
+#STEP 2 Get the dataset
+   theURL<-paste("http://mirrors.tuna.tsinghua.edu.cn/CRAN/web/packages/available_packages_by_date.html", sep=" ")
+   Rpackages = readHTMLTable(theURL, header=T, which=1,stringsAsFactors=F)
+```
+```{r}
+   if (!require("ggplot2")) {
+    install.packages("ggplot2")
+     library(ggplot2)
+}
+```
+```{r}
+#STEP 3 Load "dplyr" package
+library(dplyr)
+```
+```{r}
+#STEP 4 Count the publish paper every year and plot the data
+Rpackages$Year<-format(as.Date(Rpackages[,1]), "%Y")
+tmp<-count(Rpackages, Rpackages$Year)
+```
+```{r}
+plot(x=tmp[1:14,1],y=t(tmp[1:14,2]),main="Khadijah CRAN Paper Publish",type='l',xlab="Publish_date",ylab="Numbers")
+```
+#Problem 3--------------------------------------------------------------
+```{r}
+data(iris)
+```
+```{r}
+dt<-iris
+```
+```{r}
+lapply(dt[,1:4],mean)
+```
+```{r}
+lapply(dt[,1:4],sd)
+```
